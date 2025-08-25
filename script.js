@@ -1,17 +1,27 @@
-var categorySelect = document.getElementById("category");
-var productList = document.getElementById("product-list");
-var products = productList.getElementsByTagName("li");
+const svg = document.getElementById("drawingArea");
+const clearBtn = document.getElementById("clearBtn");
 
-categorySelect.addEventListener("change", function() {
-  var selectedCategory = categorySelect.value;
+let drawing = false;
+let currentPath;
 
-  for (var i = 0; i < products.length; i++) {
-    var productCategory = products[i].getAttribute("data-category");
+svg.addEventListener("mousedown", (e) => {
+  drawing = true;
+  const point = getMousePosition(e);
+  currentPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  currentPath.setAttribute("stroke", "blue");
+  currentPath.setAttribute("stroke-width", "2");
+  currentPath.setAttribute("fill", "none");
+  currentPath.setAttribute("d", `M${point.x},${point.y}`);
+  svg.appendChild(currentPath);
+});
 
-    if (selectedCategory === "All" || selectedCategory === productCategory) {
-      products[i].style.display = "block";
-    } else {
-      products[i].style.display = "none";
-    }
-  }
+svg.addEventListener("mousemove", (e) => {
+  if (!drawing) return;
+  const point = getMousePosition(e);
+  let d = currentPath.getAttribute("d");
+  currentPath.setAttribute("d", d + ` L${point.x},${point.y}`);
+});
+
+svg.addEventListener("mouseup", () => {
+  drawing = false;
 });
